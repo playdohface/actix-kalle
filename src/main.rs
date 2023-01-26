@@ -1,8 +1,43 @@
-use dotenvy::dotenv;
-use std::env;
+#![allow(unused_imports)]
 
-fn main() {
+use dotenvy::dotenv;
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+
+mod database;
+mod services;
+use services::*;
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
     dotenv().ok();
-    
-    println!("{}",env::var("MYENVVAR").unwrap().to_string());
+    println!("Connecting to Database ...");
+    let pool = match database::connect().await {
+        Ok(dbpool) => dbpool,
+        Err(e) => panic!("Error connecting to Database: {:?}", e)
+    };
+
+    let port:u16 = std::env::var("PORT").unwrap_or_else(|_| {
+            eprintln!("PORT environment-variable not set, reverting to 8080");
+            "8080".to_string()
+            }).parse().unwrap();
+    let ip: std::net::IpAddr = std::env::var("IP").unwrap().parse().unwrap_or_else(|e| {
+            eprintln!("Could not parse IP, Reverting to 0.0.0.0 {:?}", e);
+            std::net::IpAddr::from([0,0,0,0])
+    });
+
+
+    println!("Starting Server at {}:{}", ip, port);
+    HttpServer::new(move || {
+        App::new()
+            .app_data(web::Data::new(pool.clone()))
+            .service(hello)
+            .service(echo)
+            .service(plants)
+            //.route("/hey", web::get().to(manual_hello))
+    })
+    .bind((ip, port))?
+    .run()
+    .await
 }
+
+

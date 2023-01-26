@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 actix-web = {version="4"}
 dotenvy = "0.15.6"
+serde = "1.0.152"
+sqlx = { version = "0.6", features = [ "runtime-actix-rustls" , "postgres" ] }
