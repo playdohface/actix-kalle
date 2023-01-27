@@ -1,9 +1,10 @@
-use sqlx::postgres::PgPoolOptions;
+//! Module for all database-related logic
 
+use sqlx::postgres::PgPoolOptions;
 use sqlx::{FromRow, Postgres, Pool, Error};
 use serde::Serialize;
-use dotenvy::dotenv;
 use std::env;
+
 
 #[derive(Debug, Serialize, FromRow)]
 pub struct Plant {
@@ -15,18 +16,19 @@ pub struct Plant {
 pub async fn fetch_plants(db: &Pool<Postgres>) -> Result<Vec<Plant>, Error>{
     let plants = sqlx::query_as!(Plant, "
     SELECT name, age, location FROM plants;
-    ").fetch_all(db).await.unwrap();
+    ").fetch_all(db).await?;
     Ok(plants)
 }
 
-pub async fn connect() -> Result<Pool<Postgres>, sqlx::Error> {
-    dotenv().ok();
+///Returns a connection-pool to a PostgreSQL Database. Needs DATABASE_URL to be set. 
+/// 
+///Example: `DATABASE_URL=postgres://<username>:<password>@localhost:5432/<database_name>`
+pub async fn connect() -> Result<Pool<Postgres>, Error> {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-
-    Ok(PgPoolOptions::new()
+    PgPoolOptions::new()
         .max_connections(5)
-        .connect(&database_url).await?)
-
+        .connect(&database_url).await
+}
     //sqlx::query("INSERT INTO plants (name, age, location) VALUES ('Basilikum', 1, 'kitchen')")
     //    .execute(&pool).await?;
 
@@ -39,4 +41,3 @@ pub async fn connect() -> Result<Pool<Postgres>, sqlx::Error> {
     // }
 
  
-}

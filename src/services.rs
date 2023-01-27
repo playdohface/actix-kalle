@@ -1,3 +1,5 @@
+//! Module for all the route Handlers
+
 use actix_web::{self, web, get, post, HttpResponse, Responder};
 use sqlx::{Pool, Postgres};
 use crate::database;

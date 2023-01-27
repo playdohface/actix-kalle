@@ -1,0 +1,1 @@
+We are serving static files here for now. 

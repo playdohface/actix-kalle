@@ -1,0 +1,33 @@
+{
+  "db": "PostgreSQL",
+  "34d3fd203ff6557fdb6b25b3e9cdf1adc78aac7633f48c9112c3fd3f2bf5ce8d": {
+    "describe": {
+      "columns": [
+        {
+          "name": "name",
+          "ordinal": 0,
+          "type_info": "Text"
+        },
+        {
+          "name": "age",
+          "ordinal": 1,
+          "type_info": "Int4"
+        },
+        {
+          "name": "location",
+          "ordinal": 2,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n    SELECT name, age, location FROM plants;\n    "
+  }
+}

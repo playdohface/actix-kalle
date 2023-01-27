@@ -1,0 +1,6 @@
+target
+.git
+.gitignore
+*.http
+Dockerfile
+.dockerignore
